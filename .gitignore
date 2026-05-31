@@ -9,6 +9,10 @@ npm-debug.log*
 # environment
 .env
 .env.production
+
+# secrets / keys — never commit (GitHub App private keys, etc.)
+*.pem
+*.key
 # macOS / editors
 .DS_Store
 # content sync staging (populated by GH Actions)

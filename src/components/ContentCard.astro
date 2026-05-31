@@ -1,15 +1,16 @@
 ---
 import type { ArticleEntry } from '../lib/articles';
 import { readingTimeLabel } from '../lib/reading-time';
+import { href } from '../lib/url';
 
 interface Props {
   entry: ArticleEntry;
 }
 const { entry } = Astro.props;
 const { data } = entry;
-const href = `/${data.topic}/${entry.id}`;
+const to = href(`/${data.topic}/${entry.id}`);
 ---
-<a class="content-card" href={href}>
+<a class="content-card" href={to}>
   <div class="content-card__head">
     <span class="badge" data-difficulty={data.difficulty}>{data.difficulty}</span>
     {data.status === 'draft' && <span class="tag">draft</span>}

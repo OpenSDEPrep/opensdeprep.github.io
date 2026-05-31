@@ -7,6 +7,7 @@ import TableOfContents from '../../components/TableOfContents.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
 import { TOPIC_META, TOPIC_ORDER, type Topic } from '../../lib/topics';
 import { getTopicArticles, relatedArticles, type ArticleEntry } from '../../lib/articles';
+import { href } from '../../lib/url';
 
 export async function getStaticPaths() {
   const paths = [];
@@ -53,7 +54,7 @@ const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${r
     <ul class="subnav">
       {meta.subtopics.map((sub) => (
         <li class={sub === data.subtopic ? 'is-active' : ''}>
-          <a href={`/${topic}#${sub}`}>{sub.replace(/-/g, ' ')}</a>
+          <a href={href(`/${topic}#${sub}`)}>{sub.replace(/-/g, ' ')}</a>
         </li>
       ))}
     </ul>
@@ -63,9 +64,9 @@ const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${r
   <Breadcrumb
     slot="breadcrumb"
     items={[
-      { label: 'Home', href: '/' },
-      { label: meta.label, href: `/${topic}` },
-      { label: data.subtopic, href: `/${topic}#${data.subtopic}` },
+      { label: 'Home', href: href('/') },
+      { label: meta.label, href: href(`/${topic}`) },
+      { label: data.subtopic, href: href(`/${topic}#${data.subtopic}`) },
       { label: data.title },
     ]}
   />
@@ -83,12 +84,12 @@ const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${r
   <!-- prev / next -->
   <nav slot="pager" class="pager" aria-label="Article navigation">
     {prev ? (
-      <a class="pager__link" href={`/${topic}/${prev.id}`}>
+      <a class="pager__link" href={href(`/${topic}/${prev.id}`)}>
         <span class="eyebrow">Previous</span><span>{prev.data.title}</span>
       </a>
     ) : <span />}
     {next && (
-      <a class="pager__link pager__link--next" href={`/${topic}/${next.id}`}>
+      <a class="pager__link pager__link--next" href={href(`/${topic}/${next.id}`)}>
         <span class="eyebrow">Next</span><span>{next.data.title}</span>
       </a>
     )}

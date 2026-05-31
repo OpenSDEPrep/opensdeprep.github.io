@@ -1,5 +1,6 @@
 ---
 import type { ArticleEntry } from '../lib/articles';
+import { href } from '../lib/url';
 
 interface Props {
   entries: ArticleEntry[];
@@ -12,7 +13,7 @@ const { entries } = Astro.props;
     <ul>
       {entries.map((entry) => (
         <li>
-          <a href={`/${entry.data.topic}/${entry.id}`}>
+          <a href={href(`/${entry.data.topic}/${entry.id}`)}>
             <span class="related__title">{entry.data.title}</span>
             <span class="related__sub">{entry.data.subtopic}</span>
           </a>

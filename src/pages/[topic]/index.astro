@@ -5,6 +5,7 @@ import ContentList from '../../components/ContentList.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import { TOPIC_META, TOPIC_ORDER, type Topic } from '../../lib/topics';
 import { getTopicArticles } from '../../lib/articles';
+import { href } from '../../lib/url';
 
 export async function getStaticPaths() {
   return TOPIC_ORDER.map((topic) => ({ params: { topic } }));
@@ -19,7 +20,7 @@ const present = new Set(entries.map((e) => e.data.subtopic));
 ---
 <BaseLayout title={meta.label} description={meta.description}>
   <div class="container topic">
-    <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: meta.label }]} />
+    <Breadcrumb items={[{ label: 'Home', href: href('/') }, { label: meta.label }]} />
 
     <header class="topic__header">
       <h1>{meta.label}</h1>

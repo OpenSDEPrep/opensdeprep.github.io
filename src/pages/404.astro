@@ -1,15 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { TOPIC_META, TOPIC_ORDER } from '../lib/topics';
+import { href } from '../lib/url';
 ---
 <BaseLayout title="Not found">
   <section class="container notfound">
     <span class="eyebrow">404</span>
     <h1>This page took a wrong turn.</h1>
     <p>The article or page you're after doesn't exist (yet).</p>
-    <p><a href="/">← Back to home</a></p>
+    <p><a href={href('/')}>← Back to home</a></p>
     <div class="notfound__topics">
-      {TOPIC_ORDER.map((t) => <a class="tag" href={`/${t}`}>{TOPIC_META[t].label}</a>)}
+      {TOPIC_ORDER.map((t) => <a class="tag" href={href(`/${t}`)}>{TOPIC_META[t].label}</a>)}
     </div>
   </section>
 </BaseLayout>

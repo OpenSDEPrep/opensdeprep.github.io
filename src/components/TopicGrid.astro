@@ -1,5 +1,6 @@
 ---
 import { TOPIC_META, TOPIC_ORDER, type Topic } from '../lib/topics';
+import { href } from '../lib/url';
 
 interface Props {
   counts: Record<Topic, number>;
@@ -10,7 +11,7 @@ const { counts } = Astro.props;
   {TOPIC_ORDER.map((t) => {
     const meta = TOPIC_META[t];
     return (
-      <a class="topic-card" href={`/${t}`}>
+      <a class="topic-card" href={href(`/${t}`)}>
         <span class="eyebrow">{meta.label}</span>
         <p class="topic-card__desc">{meta.description}</p>
         <span class="topic-card__count">{counts[t]} article{counts[t] === 1 ? '' : 's'}</span>

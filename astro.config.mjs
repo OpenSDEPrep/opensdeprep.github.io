@@ -4,10 +4,12 @@ import mdx from '@astrojs/mdx';
 
 // https://astro.build/config
 export default defineConfig({
-  // Update to your final domain. For a GitHub *project* page
-  // (e.g. opensdeprep.github.io/prep) also set `base: '/prep'`.
+  // Published at https://opensdeprep.github.io/site/ (project page), so the app
+  // is served under the `/site` base. Internal links go through href() in
+  // src/lib/url.ts. To move to a custom domain / root, set base: '/' (or remove)
+  // and update `site` — the helper handles both.
   site: 'https://opensdeprep.github.io',
-  // base: '/prep',
+  base: '/site',
   integrations: [mdx()],
   markdown: {
     shikiConfig: {
