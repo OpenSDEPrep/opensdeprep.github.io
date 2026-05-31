@@ -13,15 +13,32 @@ See [`docs/prd.md`](docs/prd.md) (architecture / data contract) and
 
 ```bash
 npm install
+npm run sync       # clone topic repos → src/content/<topic> + src/roadmaps/<topic>
 npm run dev        # http://localhost:4321
 npm run build      # astro build + pagefind index → dist/
 npm run preview    # serve the production build
 npm run check      # astro check (types)
 ```
 
-> The repo ships a few **sample articles** under `src/content/dsa/` and a sample
-> roadmap so the site renders locally before any topic repo exists. In CI these
-> are replaced by `rsync --delete` with the real synced content.
+> **Content is not committed here.** Topic repos (`lld`, …) are the single source
+> of truth; their `content/` + `roadmaps/` are synced into `src/` and gitignored.
+> Run `npm run sync` (all topics) or `npm run sync -- lld` (one) before `dev`.
+> CI does the equivalent via checkout + rsync on every deploy. Configure which
+> repos are pulled in [`scripts/sync-content.mjs`](scripts/sync-content.mjs).
+
+### Authoring conventions
+
+An article is a markdown file with the [frontmatter contract](src/content.config.ts).
+Two file shapes are supported and produce the same clean slug:
+
+| On disk (in a topic repo) | URL slug |
+| --- | --- |
+| `content/arrays/two-pointer.md` | `arrays/two-pointer` |
+| `content/oop-principles/README.md` | `oop-principles` |
+| `content/case-studies/easy/parking-lot/README.md` | `case-studies/easy/parking-lot` |
+
+i.e. a `README.md` makes its **directory** the article (the `lld` repo uses this,
+keeping code samples like `.kt` files next to the prose).
 
 ## Structure
 

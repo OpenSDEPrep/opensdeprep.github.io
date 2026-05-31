@@ -13,3 +13,11 @@ npm-debug.log*
 .DS_Store
 # content sync staging (populated by GH Actions)
 _sync/
+
+# synced topic content — topic repos are the single source of truth.
+# Populate locally with `npm run sync`; CI syncs on deploy. Keep .gitkeep so
+# the collection/glob base dirs still exist on a clean checkout.
+src/content/*/*
+!src/content/*/.gitkeep
+src/roadmaps/*/*
+!src/roadmaps/*/.gitkeep

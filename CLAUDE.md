@@ -10,7 +10,13 @@ Guidance for agents working in this repo. Read the two source-of-truth docs befo
 
 `OpenSDEPrep` is the **`prep`** repo: a fully static, GitHub Pages–hosted **Astro** site for SDE interview prep. No backend, no login, no progress tracking. Content lives in **separate per-topic GitHub repos** (`dsa`, `lld`, `hld`, `frontend`, `devops`, `lang-runtime`) and is synced into `src/content/` at build time via GitHub Actions. This repo renders, navigates, filters, and searches that content.
 
-> **Status:** the Astro site is **not scaffolded yet** — this repo currently holds only design/spec docs and `assets/`. When building, follow the directory layout and build sequence in [`docs/prd.md`](docs/prd.md).
+> **Status:** Astro site scaffolded and building. `lld` is the first wired topic repo (28 articles). Other topic repos not yet created.
+
+## Content sync (important)
+
+Topic content is **not committed** to this repo — topic repos are the single source of truth. `content/` + `roadmaps/` are synced into `src/content/<topic>` / `src/roadmaps/<topic>` and **gitignored** (only `.gitkeep` is tracked). Run `npm run sync` locally before `npm run dev`; CI syncs on deploy. Configure repos in [`scripts/sync-content.mjs`](scripts/sync-content.mjs).
+
+Articles may be authored as `<slug>.md` **or** `<dir>/README.md` (the `lld` repo uses README-per-directory, with `.kt` code samples alongside). The loader's `articleSlug()` maps both to a clean slug — never hardcode the `.md` filename when building source links; derive from `entry.filePath`.
 
 ## Reconciled conventions (do not reintroduce the old variants)
 

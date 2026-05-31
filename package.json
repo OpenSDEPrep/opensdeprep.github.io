@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
+    "sync": "node scripts/sync-content.mjs",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "check": "astro check",

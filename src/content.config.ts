@@ -37,9 +37,25 @@ const articleSchema = z.object({
 
 export type ArticleData = z.infer<typeof articleSchema>;
 
+// Article slug from a file path relative to the topic's content/ root.
+// Supports two authoring conventions (see prd.md + the lld repo):
+//   arrays/two-pointer.md          -> arrays/two-pointer
+//   oop-principles/README.md       -> oop-principles      (dir = article)
+//   case-studies/easy/parking-lot/README.md -> case-studies/easy/parking-lot
+export function articleSlug(entryPath: string): string {
+  return entryPath
+    .replace(/\\/g, '/')
+    .replace(/\.(md|mdx)$/i, '')
+    .replace(/\/(README|index)$/i, '');
+}
+
 const topicCollection = (topic: (typeof TOPICS)[number]) =>
   defineCollection({
-    loader: glob({ pattern: '**/*.{md,mdx}', base: `./src/content/${topic}` }),
+    loader: glob({
+      pattern: '**/*.{md,mdx}',
+      base: `./src/content/${topic}`,
+      generateId: ({ entry }) => articleSlug(entry),
+    }),
     schema: articleSchema,
   });
 

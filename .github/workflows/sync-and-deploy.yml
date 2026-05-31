@@ -32,6 +32,13 @@ jobs:
       # --- Checkout each topic repo into a staging dir ---
       # Repeat this block per topic. Requires a CONTENT_READ_TOKEN secret with
       # read access to the topic repos (a fine-grained PAT or GitHub App token).
+      - name: Checkout LLD content
+        uses: actions/checkout@v4
+        with:
+          repository: OpenSDEPrep/lld
+          path: _sync/lld
+          token: ${{ secrets.CONTENT_READ_TOKEN }}
+
       - name: Checkout DSA content
         uses: actions/checkout@v4
         with:
@@ -40,10 +47,8 @@ jobs:
           token: ${{ secrets.CONTENT_READ_TOKEN }}
         continue-on-error: true # topic repo may not exist yet
 
-      # - name: Checkout LLD content
-      #   uses: actions/checkout@v4
-      #   with: { repository: OpenSDEPrep/lld, path: _sync/lld, token: '${{ secrets.CONTENT_READ_TOKEN }}' }
-      # ... hld, frontend, devops, lang-runtime ...
+      # Add the remaining topic repos here as they come online:
+      # hld, frontend, devops, lang-runtime — same block, swapping the name.
 
       - name: Sync content and roadmap directories
         run: |
