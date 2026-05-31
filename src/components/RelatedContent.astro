@@ -1,0 +1,40 @@
+---
+import type { ArticleEntry } from '../lib/articles';
+
+interface Props {
+  entries: ArticleEntry[];
+}
+const { entries } = Astro.props;
+---
+{entries.length > 0 && (
+  <section class="related">
+    <h2>Related articles</h2>
+    <ul>
+      {entries.map((entry) => (
+        <li>
+          <a href={`/${entry.data.topic}/${entry.id}`}>
+            <span class="related__title">{entry.data.title}</span>
+            <span class="related__sub">{entry.data.subtopic}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+)}
+
+<style>
+  .related { margin-top: var(--space-2xl); }
+  .related h2 { font-size: 20px; margin-bottom: var(--space-md); }
+  .related ul {
+    list-style: none; margin: 0; padding: 0;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-sm);
+  }
+  .related li a {
+    display: flex; flex-direction: column; gap: 2px;
+    border: 1px solid var(--color-border); border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-md); background: var(--color-surface);
+  }
+  .related li a:hover { border-color: var(--color-tertiary); text-decoration: none; }
+  .related__title { font-weight: 600; font-size: 14px; color: var(--color-primary); }
+  .related__sub { font-family: var(--font-mono); font-size: 11px; color: var(--color-muted); }
+</style>

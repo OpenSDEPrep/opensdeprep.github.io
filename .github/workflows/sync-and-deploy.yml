@@ -1,0 +1,81 @@
+name: Sync Content & Deploy
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [content-updated]
+  schedule:
+    - cron: '0 2 * * *' # nightly fallback sync at 02:00 UTC
+  workflow_dispatch:
+
+# Required for the GitHub Pages deployment action
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  sync-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - name: Checkout site repo
+        uses: actions/checkout@v4
+
+      # --- Checkout each topic repo into a staging dir ---
+      # Repeat this block per topic. Requires a CONTENT_READ_TOKEN secret with
+      # read access to the topic repos (a fine-grained PAT or GitHub App token).
+      - name: Checkout DSA content
+        uses: actions/checkout@v4
+        with:
+          repository: OpenSDEPrep/dsa
+          path: _sync/dsa
+          token: ${{ secrets.CONTENT_READ_TOKEN }}
+        continue-on-error: true # topic repo may not exist yet
+
+      # - name: Checkout LLD content
+      #   uses: actions/checkout@v4
+      #   with: { repository: OpenSDEPrep/lld, path: _sync/lld, token: '${{ secrets.CONTENT_READ_TOKEN }}' }
+      # ... hld, frontend, devops, lang-runtime ...
+
+      - name: Sync content and roadmap directories
+        run: |
+          set -e
+          for topic in dsa lld hld frontend devops lang-runtime; do
+            if [ -d "_sync/$topic/content" ]; then
+              mkdir -p "src/content/$topic"
+              rsync -av --delete "_sync/$topic/content/"  "src/content/$topic/"
+            fi
+            if [ -d "_sync/$topic/roadmaps" ]; then
+              mkdir -p "src/roadmaps/$topic"
+              rsync -av --delete "_sync/$topic/roadmaps/" "src/roadmaps/$topic/"
+            fi
+          done
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site (Astro + Pagefind)
+        run: npm run build
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
+
+      - name: Deploy to GitHub Pages
+        id: deploy
+        uses: actions/deploy-pages@v4

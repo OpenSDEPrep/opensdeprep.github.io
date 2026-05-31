@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import ContentList from '../../components/ContentList.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { TOPIC_META, TOPIC_ORDER, type Topic } from '../../lib/topics';
+import { getTopicArticles } from '../../lib/articles';
+
+export async function getStaticPaths() {
+  return TOPIC_ORDER.map((topic) => ({ params: { topic } }));
+}
+
+const topic = Astro.params.topic as Topic;
+const meta = TOPIC_META[topic];
+const entries = await getTopicArticles(topic);
+
+// subtopics that actually have content, for the sidebar
+const present = new Set(entries.map((e) => e.data.subtopic));
+---
+<BaseLayout title={meta.label} description={meta.description}>
+  <div class="container topic">
+    <Breadcrumb items={[{ label: 'Home', href: '/' }, { label: meta.label }]} />
+
+    <header class="topic__header">
+      <h1>{meta.label}</h1>
+      <p class="topic__desc">{meta.description}</p>
+      <span class="eyebrow">{entries.length} article{entries.length === 1 ? '' : 's'}</span>
+    </header>
+
+    <div class="topic__body">
+      <aside class="topic__nav" aria-label="Subtopics">
+        <span class="eyebrow">Subtopics</span>
+        <ul>
+          {meta.subtopics.map((sub) => (
+            <li class={present.has(sub) ? '' : 'is-empty'}>
+              <a href={`#${sub}`}>{sub.replace(/-/g, ' ')}</a>
+            </li>
+          ))}
+        </ul>
+      </aside>
+
+      <div class="topic__main">
+        <FilterBar showRoles={true} />
+        <ContentList entries={entries} />
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .topic { padding-block: var(--space-xl); }
+  .topic__header { margin-bottom: var(--space-xl); }
+  .topic__desc { color: var(--color-secondary); font-size: 18px; max-width: 60ch; margin: var(--space-sm) 0; }
+  .topic__body { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: var(--space-2xl); align-items: start; }
+  .topic__nav { position: sticky; top: 84px; }
+  .topic__nav ul { list-style: none; margin: var(--space-sm) 0 0; padding: 0; }
+  .topic__nav li a { display: block; padding: 4px 0; font-size: 14px; color: var(--color-secondary); text-transform: capitalize; }
+  .topic__nav li.is-empty a { color: var(--color-muted); opacity: 0.6; }
+  @media (max-width: 820px) {
+    .topic__body { grid-template-columns: minmax(0, 1fr); }
+    .topic__nav { display: none; }
+  }
+</style>

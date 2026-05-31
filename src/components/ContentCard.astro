@@ -1,0 +1,48 @@
+---
+import type { ArticleEntry } from '../lib/articles';
+import { readingTimeLabel } from '../lib/reading-time';
+
+interface Props {
+  entry: ArticleEntry;
+}
+const { entry } = Astro.props;
+const { data } = entry;
+const href = `/${data.topic}/${entry.id}`;
+---
+<a class="content-card" href={href}>
+  <div class="content-card__head">
+    <span class="badge" data-difficulty={data.difficulty}>{data.difficulty}</span>
+    {data.status === 'draft' && <span class="tag">draft</span>}
+  </div>
+  <h3 class="content-card__title">{data.title}</h3>
+  <p class="content-card__desc">{data.description}</p>
+  <div class="content-card__meta">
+    <span>{data.subtopic}</span>
+    <span aria-hidden="true">·</span>
+    <span>{readingTimeLabel(entry.body)}</span>
+  </div>
+</a>
+
+<style>
+  .content-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+    color: var(--color-primary);
+  }
+  .content-card:hover { border-color: var(--color-tertiary); text-decoration: none; }
+  .content-card__head { display: flex; gap: var(--space-sm); align-items: center; }
+  .content-card__title { margin: 0; font-size: 18px; }
+  .content-card__desc { margin: 0; color: var(--color-secondary); font-size: 14px; }
+  .content-card__meta {
+    display: flex;
+    gap: var(--space-sm);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--color-muted);
+  }
+</style>

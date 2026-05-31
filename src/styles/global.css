@@ -1,0 +1,154 @@
+/*
+ * Design tokens mirror DESIGN.md (Google Labs design.md format).
+ * Keep these in sync with the YAML frontmatter in /DESIGN.md.
+ */
+:root {
+  /* colors */
+  --color-primary: #111827;
+  --color-secondary: #4b5563;
+  --color-tertiary: #4f46e5;
+  --color-neutral: #f8fafc;
+  --color-surface: #ffffff;
+  --color-border: #e5e7eb;
+  --color-muted: #6b7280;
+  --color-code-bg: #0f172a;
+  --color-code-text: #e5e7eb;
+  --color-success: #047857;
+  --color-warning: #b45309;
+  --color-danger: #b91c1c;
+
+  /* typography */
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
+
+  /* radius */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 96px;
+  --width-content: 720px;
+  --width-page: 1200px;
+  --gutter: 24px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--color-neutral);
+  color: var(--color-primary);
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4 {
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-primary);
+}
+h1 { font-size: 40px; letter-spacing: -0.03em; }
+h2 { font-size: 28px; }
+h3 { font-size: 22px; }
+
+a {
+  color: var(--color-tertiary);
+  text-decoration: none;
+}
+a:hover { text-decoration: underline; }
+
+:focus-visible {
+  outline: 2px solid var(--color-tertiary);
+  outline-offset: 2px;
+  border-radius: var(--radius-xs);
+}
+
+code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+}
+
+/* Shiki / fenced code blocks */
+pre {
+  background: var(--color-code-bg) !important;
+  color: var(--color-code-text);
+  padding: 20px;
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  font-size: 14px;
+  line-height: 1.6;
+}
+pre code { font-size: inherit; }
+
+/* layout primitives */
+.container {
+  width: 100%;
+  max-width: var(--width-page);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+.prose {
+  max-width: var(--width-content);
+}
+.prose p, .prose ul, .prose ol { font-size: 16px; }
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+/* difficulty badge — easy | medium | hard (never color-only) */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  color: var(--color-secondary);
+  background: var(--color-surface);
+}
+.badge[data-difficulty='easy'] { color: var(--color-success); border-color: color-mix(in srgb, var(--color-success) 30%, var(--color-border)); }
+.badge[data-difficulty='medium'] { color: var(--color-warning); border-color: color-mix(in srgb, var(--color-warning) 30%, var(--color-border)); }
+.badge[data-difficulty='hard'] { color: var(--color-danger); border-color: color-mix(in srgb, var(--color-danger) 30%, var(--color-border)); }
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-muted);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-neutral);
+  border: 1px solid var(--color-border);
+}

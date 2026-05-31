@@ -1,0 +1,51 @@
+---
+// MDX callout. Types per DESIGN.md: note | tip | warning | interview | mistake | example.
+interface Props {
+  type?: 'note' | 'tip' | 'warning' | 'interview' | 'mistake' | 'example';
+  title?: string;
+}
+const { type = 'note', title } = Astro.props;
+
+const LABELS: Record<NonNullable<Props['type']>, string> = {
+  note: 'Note',
+  tip: 'Tip',
+  warning: 'Warning',
+  interview: 'Interview',
+  mistake: 'Common mistake',
+  example: 'Example',
+};
+---
+<aside class={`callout callout--${type}`} role="note">
+  <p class="callout__title">{title ?? LABELS[type]}</p>
+  <div class="callout__body"><slot /></div>
+</aside>
+
+<style>
+  .callout {
+    border: 1px solid var(--color-border);
+    border-left-width: 3px;
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin: var(--space-lg) 0;
+    background: var(--color-surface);
+  }
+  .callout__title {
+    margin: 0 0 var(--space-xs);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .callout__body :global(p:last-child) { margin-bottom: 0; }
+
+  .callout--tip { border-left-color: var(--color-success); }
+  .callout--tip .callout__title { color: var(--color-success); }
+  .callout--warning { border-left-color: var(--color-warning); }
+  .callout--warning .callout__title { color: var(--color-warning); }
+  .callout--mistake { border-left-color: var(--color-danger); }
+  .callout--mistake .callout__title { color: var(--color-danger); }
+  .callout--interview { border-left-color: var(--color-tertiary); }
+  .callout--interview .callout__title { color: var(--color-tertiary); }
+  .callout--note, .callout--example { border-left-color: var(--color-secondary); }
+</style>

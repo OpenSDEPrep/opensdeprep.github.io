@@ -1,0 +1,31 @@
+---
+import type { ArticleEntry } from '../lib/articles';
+import ContentCard from './ContentCard.astro';
+
+interface Props {
+  entries: ArticleEntry[];
+}
+const { entries } = Astro.props;
+---
+{entries.length === 0 ? (
+  <p class="content-list__empty">No articles here yet. Content syncs in from the topic repos.</p>
+) : (
+  <div class="content-list">
+    {entries.map((entry) => <ContentCard entry={entry} />)}
+  </div>
+)}
+
+<style>
+  .content-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--space-md);
+  }
+  .content-list__empty {
+    color: var(--color-muted);
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+  }
+</style>

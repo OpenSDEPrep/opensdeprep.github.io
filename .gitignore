@@ -1,0 +1,15 @@
+# build output
+dist/
+# astro generated types & cache
+.astro/
+# dependencies
+node_modules/
+# logs
+npm-debug.log*
+# environment
+.env
+.env.production
+# macOS / editors
+.DS_Store
+# content sync staging (populated by GH Actions)
+_sync/

@@ -1,0 +1,36 @@
+---
+// Pagefind-powered static search (command-palette style). Wiring of the
+// Pagefind UI / keyboard journey comes later; this is the nav entry point.
+---
+<button class="searchbar" type="button" aria-label="Search" data-search-trigger>
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+    <circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+  </svg>
+  <span>Search</span>
+  <kbd>/</kbd>
+</button>
+
+<style>
+  .searchbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-muted);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .searchbar:hover { border-color: var(--color-tertiary); color: var(--color-secondary); }
+  .searchbar kbd {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 1px 6px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xs);
+    background: var(--color-neutral);
+  }
+</style>

@@ -1,0 +1,35 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  headings: MarkdownHeading[];
+}
+const { headings } = Astro.props;
+// Only h2/h3 in the article TOC.
+const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
+---
+{toc.length > 0 && (
+  <nav class="toc" aria-label="On this page">
+    <span class="eyebrow">On this page</span>
+    <ul>
+      {toc.map((h) => (
+        <li class={`toc__item toc__item--${h.depth}`}>
+          <a href={`#${h.slug}`}>{h.text}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}
+
+<style>
+  .toc ul { list-style: none; margin: var(--space-sm) 0 0; padding: 0; }
+  .toc__item a {
+    display: block;
+    padding: 3px 0;
+    color: var(--color-muted);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  .toc__item a:hover { color: var(--color-tertiary); text-decoration: none; }
+  .toc__item--3 a { padding-left: var(--space-md); font-size: 12px; }
+</style>

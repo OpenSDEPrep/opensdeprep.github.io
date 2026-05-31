@@ -1,0 +1,56 @@
+---
+import type { ArticleEntry } from '../lib/articles';
+import { readingTimeLabel } from '../lib/reading-time';
+
+interface Props {
+  entry: ArticleEntry;
+  sourceUrl?: string;
+}
+const { entry, sourceUrl } = Astro.props;
+const { data } = entry;
+---
+<div class="meta">
+  <div class="meta__row">
+    <span class="eyebrow">Difficulty</span>
+    <span class="badge" data-difficulty={data.difficulty}>{data.difficulty}</span>
+  </div>
+  <div class="meta__row">
+    <span class="eyebrow">Reading time</span>
+    <span class="meta__value">{readingTimeLabel(entry.body)}</span>
+  </div>
+  <div class="meta__row">
+    <span class="eyebrow">Roles</span>
+    <span class="meta__chips">{data.roles.map((r) => <span class="tag">{r}</span>)}</span>
+  </div>
+  <div class="meta__row">
+    <span class="eyebrow">Experience</span>
+    <span class="meta__chips">{data.experience.map((e) => <span class="tag">{e}</span>)}</span>
+  </div>
+  <div class="meta__row">
+    <span class="eyebrow">Tags</span>
+    <span class="meta__chips">{data.tags.map((t) => <span class="tag">{t}</span>)}</span>
+  </div>
+  <div class="meta__row">
+    <span class="eyebrow">Updated</span>
+    <span class="meta__value">{data.last_updated.toISOString().slice(0, 10)}</span>
+  </div>
+  {sourceUrl && (
+    <a class="meta__source" href={sourceUrl} target="_blank" rel="noopener">Edit on GitHub →</a>
+  )}
+</div>
+
+<style>
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+  }
+  .meta__row { display: flex; flex-direction: column; gap: 6px; }
+  .meta__value { font-size: 13px; color: var(--color-secondary); }
+  .meta__chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .meta__source { font-size: 13px; font-weight: 600; }
+</style>

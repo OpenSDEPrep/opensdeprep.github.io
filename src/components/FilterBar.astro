@@ -1,0 +1,55 @@
+---
+// Role / experience / difficulty filters. The client-side filter logic and
+// URL-param state (see prd.md "Filtering & Taxonomy") are wired in a later pass
+// — this renders the controls as the structural entry point.
+import { ROLES, EXPERIENCE, DIFFICULTY } from '../content.config';
+
+interface Props {
+  showRoles?: boolean;
+}
+const { showRoles = true } = Astro.props;
+
+const groups = [
+  ...(showRoles ? [{ key: 'role', label: 'Role', values: ROLES }] : []),
+  { key: 'exp', label: 'Experience', values: EXPERIENCE },
+  { key: 'diff', label: 'Difficulty', values: DIFFICULTY },
+];
+---
+<form class="filterbar" data-filterbar>
+  {groups.map((group) => (
+    <fieldset class="filterbar__group">
+      <legend class="eyebrow">{group.label}</legend>
+      <div class="filterbar__chips">
+        {group.values.map((value) => (
+          <label class="filterbar__chip">
+            <input type="checkbox" name={group.key} value={value} />
+            <span>{value}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  ))}
+</form>
+
+<style>
+  .filterbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+    margin-bottom: var(--space-lg);
+  }
+  .filterbar__group { border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .filterbar__chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .filterbar__chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-family: var(--font-mono); font-size: 12px;
+    border: 1px solid var(--color-border); border-radius: var(--radius-full);
+    padding: 3px 10px; cursor: pointer; color: var(--color-secondary);
+  }
+  .filterbar__chip:has(input:checked) { border-color: var(--color-tertiary); color: var(--color-tertiary); }
+  .filterbar__chip input { accent-color: var(--color-tertiary); }
+</style>

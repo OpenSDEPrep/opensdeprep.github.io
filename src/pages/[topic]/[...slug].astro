@@ -1,0 +1,125 @@
+---
+import { render } from 'astro:content';
+import ContentLayout from '../../layouts/ContentLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import TableOfContents from '../../components/TableOfContents.astro';
+import RelatedContent from '../../components/RelatedContent.astro';
+import { TOPIC_META, TOPIC_ORDER, type Topic } from '../../lib/topics';
+import { getTopicArticles, relatedArticles, type ArticleEntry } from '../../lib/articles';
+
+export async function getStaticPaths() {
+  const paths = [];
+  for (const topic of TOPIC_ORDER) {
+    const entries = await getTopicArticles(topic);
+    for (const entry of entries) {
+      paths.push({
+        params: { topic, slug: entry.id },
+        props: { topic, entry, siblings: entries },
+      });
+    }
+  }
+  return paths;
+}
+
+interface Props {
+  topic: Topic;
+  entry: ArticleEntry;
+  siblings: ArticleEntry[];
+}
+const { topic, entry, siblings } = Astro.props;
+const { data } = entry;
+const meta = TOPIC_META[topic];
+
+const { Content, headings } = await render(entry);
+const related = relatedArticles(entry, siblings);
+
+// previous / next within the same subtopic
+const inSub = siblings.filter((e) => e.data.subtopic === data.subtopic);
+const pos = inSub.findIndex((e) => e.id === entry.id);
+const prev = inSub[pos - 1];
+const next = inSub[pos + 1];
+
+const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${entry.id}.md`;
+---
+<ContentLayout title={data.title} description={data.description}>
+  <!-- left nav -->
+  <Fragment slot="nav">
+    <span class="eyebrow">{meta.label}</span>
+    <ul class="subnav">
+      {meta.subtopics.map((sub) => (
+        <li class={sub === data.subtopic ? 'is-active' : ''}>
+          <a href={`/${topic}#${sub}`}>{sub.replace(/-/g, ' ')}</a>
+        </li>
+      ))}
+    </ul>
+  </Fragment>
+
+  <!-- breadcrumb -->
+  <Breadcrumb
+    slot="breadcrumb"
+    items={[
+      { label: 'Home', href: '/' },
+      { label: meta.label, href: `/${topic}` },
+      { label: data.subtopic, href: `/${topic}#${data.subtopic}` },
+      { label: data.title },
+    ]}
+  />
+
+  <!-- article -->
+  {data.status === 'draft' && (
+    <div class="draft-banner" role="status">
+      Draft — this article is incomplete and may change.
+    </div>
+  )}
+  <h1>{data.title}</h1>
+  <p class="article-lede">{data.description}</p>
+  <Content />
+
+  <!-- prev / next -->
+  <nav slot="pager" class="pager" aria-label="Article navigation">
+    {prev ? (
+      <a class="pager__link" href={`/${topic}/${prev.id}`}>
+        <span class="eyebrow">Previous</span><span>{prev.data.title}</span>
+      </a>
+    ) : <span />}
+    {next && (
+      <a class="pager__link pager__link--next" href={`/${topic}/${next.id}`}>
+        <span class="eyebrow">Next</span><span>{next.data.title}</span>
+      </a>
+    )}
+  </nav>
+
+  <RelatedContent slot="related" entries={related} />
+
+  <!-- right aside: metadata + TOC -->
+  <Fragment slot="aside">
+    <Sidebar entry={entry} sourceUrl={sourceUrl} />
+    <div class="aside-toc"><TableOfContents headings={headings} /></div>
+  </Fragment>
+</ContentLayout>
+
+<style>
+  .article-lede { font-size: 18px; color: var(--color-secondary); margin-top: 0; }
+  .draft-banner {
+    background: color-mix(in srgb, var(--color-warning) 12%, var(--color-surface));
+    border: 1px solid color-mix(in srgb, var(--color-warning) 40%, var(--color-border));
+    color: var(--color-warning);
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    font-size: 14px;
+    margin-bottom: var(--space-md);
+  }
+  .subnav { list-style: none; margin: var(--space-sm) 0 0; padding: 0; }
+  .subnav li a { display: block; padding: 4px 0; font-size: 13px; color: var(--color-secondary); text-transform: capitalize; }
+  .subnav li.is-active a { color: var(--color-tertiary); font-weight: 600; }
+  .pager { display: flex; justify-content: space-between; gap: var(--space-md); margin-top: var(--space-2xl); }
+  .pager__link {
+    display: flex; flex-direction: column; gap: 2px;
+    border: 1px solid var(--color-border); border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md); background: var(--color-surface); max-width: 48%;
+  }
+  .pager__link:hover { border-color: var(--color-tertiary); text-decoration: none; }
+  .pager__link--next { text-align: right; margin-left: auto; }
+  .aside-toc { margin-top: var(--space-md); }
+</style>
