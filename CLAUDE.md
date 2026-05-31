@@ -16,6 +16,8 @@ Guidance for agents working in this repo. Read the two source-of-truth docs befo
 
 Topic content is **not committed** to this repo — topic repos are the single source of truth. `content/` + `roadmaps/` are synced into `src/content/<topic>` / `src/roadmaps/<topic>` and **gitignored** (only `.gitkeep` is tracked). Run `npm run sync` locally before `npm run dev`; CI syncs on deploy. Configure repos in [`scripts/sync-content.mjs`](scripts/sync-content.mjs).
 
+CI auth uses an **OpenSDEPrep GitHub App** (no PAT expiry): both this repo's deploy workflow (read topic repos) and each topic repo's `notify-site.yml` (dispatch a rebuild) mint a token via `actions/create-github-app-token` from `SYNC_APP_ID` + `SYNC_APP_PRIVATE_KEY` secrets. App permissions: Contents read/write + Metadata read, installed on all org repos.
+
 Articles may be authored as `<slug>.md` **or** `<dir>/README.md` (the `lld` repo uses README-per-directory, with `.kt` code samples alongside). The loader's `articleSlug()` maps both to a clean slug — never hardcode the `.md` filename when building source links; derive from `entry.filePath`.
 
 ## Reconciled conventions (do not reintroduce the old variants)

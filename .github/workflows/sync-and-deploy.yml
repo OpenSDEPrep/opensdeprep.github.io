@@ -29,22 +29,32 @@ jobs:
       - name: Checkout site repo
         uses: actions/checkout@v4
 
+      # Mint an installation token for the OpenSDEPrep GitHub App. With `owner`
+      # set and no `repositories`, the token can access every repo the app is
+      # installed on — so new topic repos work with no workflow change.
+      # Requires org (or repo) secrets: SYNC_APP_ID, SYNC_APP_PRIVATE_KEY.
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.SYNC_APP_ID }}
+          private-key: ${{ secrets.SYNC_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+
       # --- Checkout each topic repo into a staging dir ---
-      # Repeat this block per topic. Requires a CONTENT_READ_TOKEN secret with
-      # read access to the topic repos (a fine-grained PAT or GitHub App token).
       - name: Checkout LLD content
         uses: actions/checkout@v4
         with:
           repository: OpenSDEPrep/lld
           path: _sync/lld
-          token: ${{ secrets.CONTENT_READ_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Checkout DSA content
         uses: actions/checkout@v4
         with:
           repository: OpenSDEPrep/dsa
           path: _sync/dsa
-          token: ${{ secrets.CONTENT_READ_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
         continue-on-error: true # topic repo may not exist yet
 
       # Add the remaining topic repos here as they come online:
