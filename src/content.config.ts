@@ -38,21 +38,38 @@ const articleSchema = z.object({
 export type ArticleData = z.infer<typeof articleSchema>;
 
 // Article slug from a file path relative to the topic's content/ root.
-// Supports two authoring conventions (see prd.md + the lld repo):
-//   arrays/two-pointer.md          -> arrays/two-pointer
-//   oop-principles/README.md       -> oop-principles      (dir = article)
-//   case-studies/easy/parking-lot/README.md -> case-studies/easy/parking-lot
+// Content model v2 — meaningful filenames only; README-as-article is gone.
+//
+// Collapse rule: if a Markdown file's basename equals its parent directory's
+// name, the duplicate segment collapses.  This lets code-bearing articles
+// live in their own folder without an ugly doubled slug.
+//
+//   foundations/big-o.md                      -> foundations/big-o
+//   foundations/foundations.md                -> foundations   (subtopic overview)
+//   case-studies/parking-lot/parking-lot.md   -> case-studies/parking-lot
+//
+// README.md is never ingested — topic-repo README files are human docs only
+// and are excluded by the glob pattern (see topicCollection below).
 export function articleSlug(entryPath: string): string {
-  return entryPath
-    .replace(/\\/g, '/')
-    .replace(/\.(md|mdx)$/i, '')
-    .replace(/\/(README|index)$/i, '');
+  const normalized = entryPath.replace(/\\/g, '/').replace(/\.(md|mdx)$/i, '');
+  // Split into segments and check whether the last segment equals its parent.
+  const segments = normalized.split('/');
+  if (segments.length >= 2) {
+    const last = segments[segments.length - 1];
+    const parent = segments[segments.length - 2];
+    if (last === parent) {
+      segments.pop(); // collapse: "parking-lot/parking-lot" → "parking-lot"
+    }
+  }
+  return segments.join('/');
 }
 
 const topicCollection = (topic: (typeof TOPICS)[number]) =>
   defineCollection({
     loader: glob({
-      pattern: '**/*.{md,mdx}',
+      // Exclude README.md at any depth — those are human-readable repo docs,
+      // not articles.  Every real article must have a meaningful filename.
+      pattern: ['**/*.{md,mdx}', '!**/README.md', '!**/README.mdx'],
       base: `./src/content/${topic}`,
       generateId: ({ entry }) => articleSlug(entry),
     }),

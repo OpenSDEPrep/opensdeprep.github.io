@@ -41,8 +41,11 @@ const pos = inSub.findIndex((e) => e.id === entry.id);
 const prev = inSub[pos - 1];
 const next = inSub[pos + 1];
 
-// Derive the source file path from the real on-disk path so links work for
-// both `<slug>.md` and `<dir>/README.md` conventions.
+// Derive the source file path from the real on-disk path.
+// Content model v2: articles use meaningful filenames (<slug>.md or
+// <slug>/<slug>.md).  We always derive from entry.filePath so the link
+// stays correct for both flat and folder-style articles — never reconstruct
+// the path from entry.id, which has already had the collapse rule applied.
 const relPath =
   entry.filePath?.replace(/\\/g, '/').split(`src/content/${topic}/`)[1] ?? `${entry.id}.md`;
 const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${relPath}`;

@@ -29,16 +29,19 @@ npm run check      # astro check (types)
 ### Authoring conventions
 
 An article is a markdown file with the [frontmatter contract](src/content.config.ts).
-Two file shapes are supported and produce the same clean slug:
+Every article must have a **meaningful, kebab-case filename** — `README.md` is never
+ingested (it is human docs only).  Two file shapes are supported and produce the same
+clean slug:
 
 | On disk (in a topic repo) | URL slug |
 | --- | --- |
-| `content/arrays/two-pointer.md` | `arrays/two-pointer` |
-| `content/oop-principles/README.md` | `oop-principles` |
-| `content/case-studies/easy/parking-lot/README.md` | `case-studies/easy/parking-lot` |
+| `content/foundations/big-o.md` | `foundations/big-o` |
+| `content/foundations/foundations.md` | `foundations` (subtopic overview) |
+| `content/case-studies/parking-lot/parking-lot.md` | `case-studies/parking-lot` |
 
-i.e. a `README.md` makes its **directory** the article (the `lld` repo uses this,
-keeping code samples like `.kt` files next to the prose).
+**Collapse rule:** if a Markdown file's basename equals its parent directory's name, the
+duplicate trailing segment collapses.  This lets code-bearing articles live in their own
+folder (alongside `examples/` and `solutions/`) without an ugly doubled slug.
 
 ## Structure
 
