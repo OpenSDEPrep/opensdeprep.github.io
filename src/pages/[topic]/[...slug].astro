@@ -5,6 +5,7 @@ import Breadcrumb from '../../components/Breadcrumb.astro';
 import Sidebar from '../../components/Sidebar.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
+import BookmarkButton from '../../components/BookmarkButton.astro';
 import { TOPIC_META, TOPIC_ORDER, type Topic } from '../../lib/topics';
 import { getTopicArticles, relatedArticles, type ArticleEntry } from '../../lib/articles';
 import { href } from '../../lib/url';
@@ -77,7 +78,15 @@ const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${r
       Draft — this article is incomplete and may change.
     </div>
   )}
-  <h1>{data.title}</h1>
+  <div class="article-header">
+    <h1>{data.title}</h1>
+    <BookmarkButton
+      articleKey={`${topic}/${entry.id}`}
+      title={data.title}
+      articleHref={href(`/${topic}/${entry.id}`)}
+      topic={topic}
+    />
+  </div>
   <p class="article-lede">{data.description}</p>
   <Content />
 
@@ -127,4 +136,30 @@ const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${r
   .pager__link:hover { border-color: var(--color-tertiary); text-decoration: none; }
   .pager__link--next { text-align: right; margin-left: auto; }
   .aside-toc { margin-top: var(--space-md); }
+  .article-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-md); flex-wrap: wrap; }
+  .article-header h1 { margin: 0; }
 </style>
+
+<!-- Continuity: record view on page load. Data passed via a hidden element. -->
+<span
+  id="article-continuity-data"
+  hidden
+  data-key={`${topic}/${entry.id}`}
+  data-title={data.title}
+  data-href={href(`/${topic}/${entry.id}`)}
+  data-topic={topic}
+></span>
+
+<script>
+  import { recordViewed } from '../../lib/continuity';
+
+  const el = document.getElementById('article-continuity-data');
+  if (el) {
+    recordViewed({
+      key: el.dataset.key!,
+      title: el.dataset.title!,
+      href: el.dataset.href!,
+      topic: el.dataset.topic!,
+    });
+  }
+</script>
