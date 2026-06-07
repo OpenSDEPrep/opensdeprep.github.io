@@ -1,0 +1,91 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getAllTags } from '../../lib/articles';
+import { href } from '../../lib/url';
+
+const tags = await getAllTags();
+const totalArticles = tags.reduce((sum, t) => sum + t.count, 0);
+---
+<BaseLayout
+  title="Tags"
+  description="Browse all tags across every OpenSDEPrep topic."
+>
+  <div class="container tags-index">
+    <Breadcrumb items={[{ label: 'Home', href: href('/') }, { label: 'Tags' }]} />
+
+    <header class="tags-index__header">
+      <h1>Tags</h1>
+      <p class="tags-index__desc">
+        Cross-topic collection views — {tags.length} tag{tags.length === 1 ? '' : 's'} across {totalArticles} article{totalArticles === 1 ? '' : 's'}.
+      </p>
+    </header>
+
+    {tags.length === 0 ? (
+      <p class="tags-index__empty">
+        No tags yet. Tags are read from article frontmatter when content syncs in from the topic repos.
+      </p>
+    ) : (
+      <ul class="tags-index__list" role="list">
+        {tags.map(({ tag, count }) => (
+          <li>
+            <a class="tag-chip" href={href(`/tags/${encodeURIComponent(tag)}`)}>
+              <span class="tag-chip__name">{tag}</span>
+              <span class="tag-chip__count">{count}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .tags-index { padding-block: var(--space-xl); }
+  .tags-index__header { margin-bottom: var(--space-xl); }
+  .tags-index__desc { color: var(--color-secondary); font-size: 18px; max-width: 60ch; margin: var(--space-sm) 0; }
+  .tags-index__empty {
+    color: var(--color-muted);
+    background: var(--color-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-lg);
+  }
+
+  .tags-index__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: var(--space-xs) var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--color-secondary);
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .tag-chip:hover {
+    border-color: var(--color-tertiary);
+    color: var(--color-tertiary);
+    text-decoration: none;
+  }
+  .tag-chip__name { font-weight: 600; }
+  .tag-chip__count {
+    font-size: 11px;
+    background: var(--color-neutral);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    padding: 1px 6px;
+    color: var(--color-muted);
+  }
+</style>
