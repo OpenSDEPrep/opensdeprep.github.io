@@ -18,7 +18,7 @@ Topic content is **not committed** to this repo — topic repos are the single s
 
 CI auth uses an **OpenSDEPrep GitHub App** (no PAT expiry): both this repo's deploy workflow (read topic repos) and each topic repo's `notify-site.yml` (dispatch a rebuild) mint a token via `actions/create-github-app-token` from `SYNC_APP_ID` + `SYNC_APP_PRIVATE_KEY` secrets. App permissions: Contents read/write + Metadata read, installed on all org repos.
 
-Articles may be authored as `<slug>.md` **or** `<dir>/README.md` (the `lld` repo uses README-per-directory, with `.kt` code samples alongside). The loader's `articleSlug()` maps both to a clean slug — never hardcode the `.md` filename when building source links; derive from `entry.filePath`.
+Articles are authored as `<slug>.md` (prose-only) **or** `<slug>/<slug>.md` with code in `examples/<lang>/` / `solutions/<lang>/` (code-bearing). `README.md` is **never** an article — it is human docs only and is excluded by the glob pattern. The loader's `articleSlug()` applies the **collapse rule**: if a file's basename equals its parent directory name, the duplicate segment collapses (`parking-lot/parking-lot.md` → `parking-lot`). Never hardcode the `.md` filename when building source/edit links; always derive from `entry.filePath`.
 
 ## Reconciled conventions (do not reintroduce the old variants)
 
