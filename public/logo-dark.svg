@@ -1,0 +1,35 @@
+<!--
+  OpenSDEPrep logo — full mark + wordmark (dark variant, for dark backgrounds)
+  Same proportions as logo.svg; wordmark text uses white.
+-->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" width="200" height="48" role="img" aria-label="OpenSDEPrep">
+  <defs>
+    <linearGradient id="brand-grad-dk" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ── Mark ── -->
+  <rect x="0" y="4" width="40" height="40" rx="9" fill="#1F2937"/>
+
+  <!-- left curly brace -->
+  <path d="M12 13 C10 13 9.5 13.5 9.5 14.5 L9.5 17 C9.5 18 8.5 18.5 8 19 C8.5 19.5 9.5 20 9.5 21 L9.5 23.5 C9.5 24.5 10 25 12 25"
+        stroke="url(#brand-grad-dk)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- right curly brace -->
+  <path d="M28 13 C30 13 30.5 13.5 30.5 14.5 L30.5 17 C30.5 18 31.5 18.5 32 19 C31.5 19.5 30.5 20 30.5 21 L30.5 23.5 C30.5 24.5 30 25 28 25"
+        stroke="url(#brand-grad-dk)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- two paths converging -->
+  <path d="M16 26 L16 22.5 L20 17 L24 22.5 L24 26"
+        stroke="url(#brand-grad-dk)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- up-arrow tip -->
+  <path d="M17.5 19 L20 14 L22.5 19"
+        stroke="url(#brand-grad-dk)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- ── Wordmark (white for dark backgrounds) ── -->
+  <text x="48" y="31" font-family="Inter, system-ui, sans-serif" font-size="18" font-weight="700"
+        letter-spacing="-0.03em" fill="#F9FAFB">OpenSDEPrep</text>
+</svg>

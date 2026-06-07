@@ -2,6 +2,25 @@
 version: alpha
 name: OpenSDEPrep
 description: A modern, static, open-source SDE interview-prep & learning hub optimized for deep reading, structured navigation, and developer credibility.
+brand:
+  concept: "Curly braces { } enclosing two paths converging into one up-arrow — structured paths merging upward"
+  palette-note: "Gradient is a brand element only (mark + OG image). Product UI accent stays indigo #4F46E5."
+  grad-start: "#4F46E5"
+  grad-end: "#06B6D4"
+  tile-light: "#111827"
+  tile-dark: "#1F2937"
+  assets:
+    favicon-svg: "public/favicon.svg"
+    logo-light: "public/logo.svg"
+    logo-dark: "public/logo-dark.svg"
+    monogram: "public/monogram.svg"
+    og-image: "public/og-image.svg"
+  usage:
+    clear-space: "Minimum clear space = 0.5× the mark height on all sides"
+    min-size-full: "Full logo minimum: 120px wide"
+    min-size-mark: "Mark / monogram minimum: 24px"
+    dos: "Use light logo on white/neutral backgrounds; dark logo on dark surfaces"
+    donts: "Do not recolor the gradient; do not stretch; do not place on busy backgrounds"
 colors:
   primary: "#111827"
   secondary: "#4B5563"
