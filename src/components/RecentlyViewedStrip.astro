@@ -1,0 +1,121 @@
+---
+/**
+ * RecentlyViewedStrip — a horizontal scrolling strip of recently-viewed articles.
+ * Reads from localStorage on the client; hidden when empty.
+ * Used on the Home page (#24).
+ */
+import { href } from '../lib/url';
+---
+
+<section class="rv-strip" id="recently-viewed-strip" aria-label="Recently viewed" hidden>
+  <div class="container">
+    <div class="rv-strip__header">
+      <h2 class="rv-strip__heading">Recently viewed</h2>
+      <a class="rv-strip__all" href={href('/library')}>View library →</a>
+    </div>
+    <ul class="rv-strip__list" id="rv-strip-list" role="list"></ul>
+  </div>
+</section>
+
+<script>
+  import { getViewed } from '../lib/continuity';
+
+  function renderStrip() {
+    const items = getViewed().slice(0, 8);
+    const section = document.getElementById('recently-viewed-strip');
+    const list = document.getElementById('rv-strip-list');
+    if (!section || !list) return;
+
+    if (items.length === 0) {
+      section.hidden = true;
+      return;
+    }
+
+    list.innerHTML = items
+      .map(
+        (r) => `
+      <li class="rv-card">
+        <a class="rv-card__link" href="${r.href}">
+          <span class="rv-card__topic">${r.topic}</span>
+          <span class="rv-card__title">${r.title}</span>
+        </a>
+      </li>`,
+      )
+      .join('');
+
+    section.hidden = false;
+  }
+
+  renderStrip();
+</script>
+
+<style>
+  .rv-strip {
+    border-bottom: 1px solid var(--color-border);
+    padding-block: var(--space-xl);
+    background: var(--color-surface);
+  }
+  .rv-strip__header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: var(--space-md);
+  }
+  .rv-strip__heading {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0;
+  }
+  .rv-strip__all {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-tertiary);
+  }
+  .rv-strip__list {
+    display: flex;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    padding-bottom: var(--space-sm);
+    list-style: none;
+    margin: 0;
+    padding-inline: 0;
+    scrollbar-width: thin;
+  }
+  .rv-card {
+    flex-shrink: 0;
+    width: 180px;
+  }
+  .rv-card__link {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-neutral);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    height: 100%;
+  }
+  .rv-card__link:hover {
+    border-color: var(--color-tertiary);
+    text-decoration: none;
+  }
+  .rv-card__topic {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted);
+  }
+  .rv-card__title {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.35;
+    /* clamp to 3 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

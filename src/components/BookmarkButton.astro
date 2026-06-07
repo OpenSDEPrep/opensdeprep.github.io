@@ -1,0 +1,100 @@
+---
+/**
+ * BookmarkButton — client-side bookmark toggle for an article.
+ *
+ * Props match the ArticleRecord shape minus the timestamp (added at runtime).
+ * The button reads initial state from localStorage on mount and updates it on click.
+ */
+interface Props {
+  /** "<topic>/<slug>" */
+  articleKey: string;
+  title: string;
+  /** full URL path (with base), e.g. "/lld/design-patterns/observer" */
+  articleHref: string;
+  topic: string;
+}
+const { articleKey, title, articleHref, topic } = Astro.props;
+---
+
+<button
+  class="bookmark-btn"
+  type="button"
+  aria-label="Bookmark this article"
+  aria-pressed="false"
+  data-key={articleKey}
+  data-title={title}
+  data-href={articleHref}
+  data-topic={topic}
+>
+  <svg class="bookmark-btn__icon" aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+  </svg>
+  <span class="bookmark-btn__label">Bookmark</span>
+</button>
+
+<script>
+  import { toggleBookmark, isBookmarked } from '../lib/continuity';
+
+  function initBookmarkButtons() {
+    document.querySelectorAll<HTMLButtonElement>('.bookmark-btn').forEach((btn) => {
+      const key = btn.dataset.key!;
+
+      // Sync initial state from localStorage
+      const bookmarked = isBookmarked(key);
+      applyState(btn, bookmarked);
+
+      btn.addEventListener('click', () => {
+        const record = {
+          key,
+          title: btn.dataset.title!,
+          href: btn.dataset.href!,
+          topic: btn.dataset.topic!,
+        };
+        const next = toggleBookmark(record);
+        applyState(btn, next);
+      });
+    });
+  }
+
+  function applyState(btn: HTMLButtonElement, bookmarked: boolean) {
+    btn.setAttribute('aria-pressed', String(bookmarked));
+    btn.classList.toggle('bookmark-btn--active', bookmarked);
+    const label = btn.querySelector('.bookmark-btn__label');
+    if (label) label.textContent = bookmarked ? 'Bookmarked' : 'Bookmark';
+    btn.setAttribute('aria-label', bookmarked ? 'Remove bookmark' : 'Bookmark this article');
+  }
+
+  // Run on initial load
+  initBookmarkButtons();
+</script>
+
+<style>
+  .bookmark-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-xs);
+    padding: 6px var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-secondary);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+  .bookmark-btn:hover {
+    border-color: var(--color-tertiary);
+    color: var(--color-tertiary);
+  }
+  .bookmark-btn--active {
+    background: color-mix(in srgb, var(--color-tertiary) 10%, var(--color-surface));
+    border-color: var(--color-tertiary);
+    color: var(--color-tertiary);
+  }
+  .bookmark-btn--active .bookmark-btn__icon {
+    fill: var(--color-tertiary);
+  }
+  .bookmark-btn__icon { flex-shrink: 0; }
+</style>

@@ -38,6 +38,9 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
             <a href={href(`/${t}`)}>{TOPIC_META[t].label}</a>
           ))}
         </nav>
+        <nav class="site-header__util" aria-label="Personal">
+          <a href={href('/library')}>Library</a>
+        </nav>
         <SearchBar />
       </div>
     </header>
@@ -88,6 +91,21 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
         color: var(--color-secondary);
       }
       .site-header__nav a:hover { color: var(--color-tertiary); text-decoration: none; }
+      .site-header__util {
+        display: flex;
+        gap: var(--space-sm);
+        flex-shrink: 0;
+      }
+      .site-header__util a {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--color-muted);
+        padding: 4px var(--space-sm);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        background: var(--color-surface);
+      }
+      .site-header__util a:hover { color: var(--color-tertiary); border-color: var(--color-tertiary); text-decoration: none; }
       .site-footer {
         margin-top: var(--space-4xl);
         border-top: 1px solid var(--color-border);

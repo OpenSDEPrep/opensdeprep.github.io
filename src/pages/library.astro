@@ -1,0 +1,188 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { href } from '../lib/url';
+---
+<BaseLayout
+  title="Library"
+  description="Your recently-viewed articles and bookmarks."
+>
+  <div class="container library">
+    <header class="library__header">
+      <h1 class="library__title">Library</h1>
+      <p class="library__lede">Your recently-viewed articles and bookmarks — stored locally in this browser.</p>
+      <button id="library-clear-btn" class="library__clear" type="button">Clear all data</button>
+    </header>
+
+    <!-- Bookmarks ──────────────────────────────────────────────── -->
+    <section class="library__section" aria-labelledby="bookmarks-heading">
+      <h2 id="bookmarks-heading" class="library__section-title">Bookmarks</h2>
+      <div id="bookmarks-list" class="library__grid">
+        <!-- populated by client JS -->
+      </div>
+      <p id="bookmarks-empty" class="library__empty" hidden>
+        No bookmarks yet — click <strong>Bookmark</strong> on any article to save it here.
+      </p>
+    </section>
+
+    <!-- Recently viewed ────────────────────────────────────────── -->
+    <section class="library__section" aria-labelledby="rv-heading">
+      <h2 id="rv-heading" class="library__section-title">Recently viewed</h2>
+      <div id="viewed-list" class="library__grid">
+        <!-- populated by client JS -->
+      </div>
+      <p id="viewed-empty" class="library__empty" hidden>
+        No articles viewed yet — start reading to populate this list.
+      </p>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  import { getBookmarks, getViewed, clearAll } from '../lib/continuity';
+
+  function formatDate(ts: number): string {
+    return new Date(ts).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  }
+
+  function renderCard(r: { key: string; title: string; href: string; topic: string; ts: number }): string {
+    return `
+      <a class="lib-card" href="${r.href}">
+        <span class="lib-card__topic">${r.topic}</span>
+        <span class="lib-card__title">${r.title}</span>
+        <span class="lib-card__date">${formatDate(r.ts)}</span>
+      </a>`;
+  }
+
+  function renderList(containerId: string, emptyId: string, items: ReturnType<typeof getBookmarks>) {
+    const container = document.getElementById(containerId)!;
+    const empty = document.getElementById(emptyId)!;
+    if (items.length === 0) {
+      container.innerHTML = '';
+      empty.hidden = false;
+    } else {
+      container.innerHTML = items.map(renderCard).join('');
+      empty.hidden = true;
+    }
+  }
+
+  function render() {
+    renderList('bookmarks-list', 'bookmarks-empty', getBookmarks());
+    renderList('viewed-list', 'viewed-empty', getViewed());
+  }
+
+  render();
+
+  document.getElementById('library-clear-btn')?.addEventListener('click', () => {
+    if (confirm('Clear all recently-viewed and bookmarks? This cannot be undone.')) {
+      clearAll();
+      render();
+    }
+  });
+</script>
+
+<style>
+  .library {
+    padding-block: var(--space-2xl);
+    max-width: 900px;
+  }
+  .library__header {
+    margin-bottom: var(--space-2xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+  .library__title {
+    font-size: 40px;
+    margin: 0;
+  }
+  .library__lede {
+    color: var(--color-secondary);
+    font-size: 16px;
+    margin: 0;
+    max-width: 60ch;
+  }
+  .library__clear {
+    align-self: flex-start;
+    margin-top: var(--space-xs);
+    padding: 4px var(--space-sm);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-muted);
+    cursor: pointer;
+  }
+  .library__clear:hover {
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+  }
+  .library__section {
+    margin-bottom: var(--space-3xl);
+  }
+  .library__section-title {
+    font-size: 22px;
+    margin: 0 0 var(--space-md);
+  }
+  .library__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--space-sm);
+  }
+  .library__empty {
+    color: var(--color-muted);
+    font-size: 14px;
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    padding: var(--space-xl);
+    text-align: center;
+    margin: 0;
+  }
+
+  /* individual library cards */
+  .lib-card {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+  .lib-card:hover {
+    border-color: var(--color-tertiary);
+  }
+  .lib-card__topic {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-muted);
+  }
+  .lib-card__title {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.35;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .lib-card__date {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--color-muted);
+    margin-top: auto;
+    padding-top: 4px;
+  }
+
+  @media (max-width: 600px) {
+    .library__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
