@@ -1,0 +1,64 @@
+---
+interface Reference {
+  title: string;
+  url: string;
+}
+
+interface Props {
+  references?: Reference[];
+}
+
+const { references } = Astro.props;
+---
+{references && references.length > 0 && (
+  <section class="references">
+    <h2>References</h2>
+    <ol>
+      {references.map((ref) => (
+        <li>
+          <a href={ref.url} target="_blank" rel="noopener noreferrer">
+            {ref.title}
+            <span class="references__ext" aria-hidden="true">↗</span>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </section>
+)}
+
+<style>
+  .references {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+  }
+  .references h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary);
+    margin-bottom: var(--space-md);
+  }
+  .references ol {
+    margin: 0;
+    padding-left: var(--space-lg);
+  }
+  .references li {
+    margin-bottom: var(--space-xs);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .references a {
+    color: var(--color-tertiary);
+    text-decoration: none;
+  }
+  .references a:hover {
+    text-decoration: underline;
+  }
+  .references__ext {
+    display: inline-block;
+    margin-left: 3px;
+    font-size: 11px;
+    color: var(--color-muted);
+    vertical-align: super;
+  }
+</style>

@@ -90,6 +90,11 @@ const articleSchema = z
     // Both fields are absent for prose-only articles.
     languages: z.array(z.string()).optional(),
     primary_language: z.string().optional(),
+    // Sources of truth for users and LLMs to verify and explore further.
+    // Absent / empty => no References section rendered.
+    references: z
+      .array(z.object({ title: z.string(), url: z.string().url() }))
+      .optional(),
   })
   .superRefine((data, ctx) => {
     // 1. Per-topic subtopic validation.
