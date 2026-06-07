@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import ContentLayout from '../../layouts/ContentLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
+import References from '../../components/References.astro';
 import Sidebar from '../../components/Sidebar.astro';
 import TableOfContents from '../../components/TableOfContents.astro';
 import RelatedContent from '../../components/RelatedContent.astro';
@@ -83,6 +84,7 @@ const sourceUrl = `https://github.com/OpenSDEPrep/${topic}/blob/main/content/${r
   <h1>{data.title}</h1>
   <p class="article-lede">{data.description}</p>
   <Content />
+  <References references={data.references} />
 
   <!-- prev / next -->
   <nav slot="pager" class="pager" aria-label="Article navigation">
