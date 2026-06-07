@@ -18,22 +18,109 @@ export const ROLES = ['backend', 'frontend', 'devops', 'ai-engineer'] as const;
 export const EXPERIENCE = ['junior', 'mid', 'senior', 'staff'] as const;
 export const DIFFICULTY = ['easy', 'medium', 'hard'] as const;
 
+// Per-topic subtopic vocabularies (prd.md §"Subtopic Conventions per Topic").
+// Each topic's articles must use one of these validated subtopic strings.
+export const SUBTOPICS = {
+  dsa: [
+    'arrays',
+    'strings',
+    'linked-lists',
+    'trees',
+    'graphs',
+    'heaps',
+    'tries',
+    'backtracking',
+    'dynamic-programming',
+    'greedy',
+    'math',
+    'bit-manipulation',
+  ],
+  lld: ['oop-principles', 'solid', 'design-patterns', 'class-diagrams', 'case-studies'],
+  hld: [
+    'fundamentals',
+    'databases',
+    'caching',
+    'messaging',
+    'api-design',
+    'distributed-systems',
+    'case-studies',
+  ],
+  frontend: [
+    'javascript',
+    'typescript',
+    'browser-internals',
+    'react-internals',
+    'css-architecture',
+    'web-performance',
+    'accessibility',
+  ],
+  devops: ['containers', 'kubernetes', 'ci-cd', 'cloud-infra', 'observability', 'sre', 'networking'],
+  'lang-runtime': [
+    'python-internals',
+    'jvm',
+    'v8',
+    'memory-models',
+    'concurrency',
+    'garbage-collection',
+  ],
+} as const satisfies Record<(typeof TOPICS)[number], readonly string[]>;
+
+// Union type of all valid subtopic strings across every topic.
+export type Subtopic = (typeof SUBTOPICS)[keyof typeof SUBTOPICS][number];
+
 // The frontmatter contract shared by every topic repo. See prd.md.
-const articleSchema = z.object({
-  title: z.string(),
-  description: z.string(),
-  topic: z.enum(TOPICS),
-  subtopic: z.string(),
-  roles: z.array(z.enum(ROLES)),
-  experience: z.array(z.enum(EXPERIENCE)),
-  difficulty: z.enum(DIFFICULTY),
-  tags: z.array(z.string()),
-  status: z.enum(['draft', 'complete']),
-  // prd.md types this as a string, but authors write unquoted dates
-  // (e.g. `last_updated: 2025-06-01`) which YAML parses as a Date. Coerce so
-  // both forms work and we get a real Date for sorting/formatting.
-  last_updated: z.coerce.date(),
-});
+const articleSchema = z
+  .object({
+    title: z.string(),
+    description: z.string(),
+    topic: z.enum(TOPICS),
+    // Validated against the per-topic enum in the superRefine below.
+    subtopic: z.string(),
+    roles: z.array(z.enum(ROLES)),
+    experience: z.array(z.enum(EXPERIENCE)),
+    difficulty: z.enum(DIFFICULTY),
+    tags: z.array(z.string()),
+    status: z.enum(['draft', 'complete']),
+    // prd.md types this as a string, but authors write unquoted dates
+    // (e.g. `last_updated: 2025-06-01`) which YAML parses as a Date. Coerce so
+    // both forms work and we get a real Date for sorting/formatting.
+    last_updated: z.coerce.date(),
+    // Code-bearing articles list the languages they embed samples for.
+    // `primary_language` selects the default tab; must be a member of `languages`.
+    // Both fields are absent for prose-only articles.
+    languages: z.array(z.string()).optional(),
+    primary_language: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    // 1. Per-topic subtopic validation.
+    const allowed = SUBTOPICS[data.topic] as readonly string[];
+    if (!allowed.includes(data.subtopic)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.invalid_enum_value,
+        options: [...allowed],
+        received: data.subtopic,
+        path: ['subtopic'],
+        message: `"${data.subtopic}" is not a valid subtopic for topic "${data.topic}". Allowed: ${allowed.join(', ')}.`,
+      });
+    }
+
+    // 2. primary_language must be a member of languages when present.
+    if (data.primary_language !== undefined) {
+      if (data.languages === undefined || data.languages.length === 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['primary_language'],
+          message: '`primary_language` requires `languages` to be set.',
+        });
+      } else if (!data.languages.includes(data.primary_language)) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['primary_language'],
+          message: `\`primary_language\` "${data.primary_language}" is not in \`languages\`: [${data.languages.join(', ')}].`,
+        });
+      }
+    }
+  });
 
 export type ArticleData = z.infer<typeof articleSchema>;
 

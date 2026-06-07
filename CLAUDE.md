@@ -30,6 +30,39 @@ Articles are authored as `<slug>.md` (prose-only) **or** `<slug>/<slug>.md` with
 - **Prerequisites** are deferred post-V1 (no `prerequisites` frontmatter field yet).
 - Frontmatter schema is enforced via Zod in `src/content/config.ts`; missing frontmatter is a build *warning*, not a failure.
 
+## Frontmatter schema (content model v2)
+
+Full contract in `src/content.config.ts`. Key points for authoring:
+
+### `subtopic` — per-topic enum (validated at build time)
+
+`subtopic` must be one of the strings defined in `SUBTOPICS` for the article's `topic`. Unknown values cause a build error. Valid values per topic:
+
+| Topic | Valid subtopics |
+|-------|-----------------|
+| `dsa` | `arrays`, `strings`, `linked-lists`, `trees`, `graphs`, `heaps`, `tries`, `backtracking`, `dynamic-programming`, `greedy`, `math`, `bit-manipulation` |
+| `lld` | `oop-principles`, `solid`, `design-patterns`, `class-diagrams`, `case-studies` |
+| `hld` | `fundamentals`, `databases`, `caching`, `messaging`, `api-design`, `distributed-systems`, `case-studies` |
+| `frontend` | `javascript`, `typescript`, `browser-internals`, `react-internals`, `css-architecture`, `web-performance`, `accessibility` |
+| `devops` | `containers`, `kubernetes`, `ci-cd`, `cloud-infra`, `observability`, `sre`, `networking` |
+| `lang-runtime` | `python-internals`, `jvm`, `v8`, `memory-models`, `concurrency`, `garbage-collection` |
+
+### `languages` and `primary_language` — code-bearing articles only
+
+Articles that embed code samples add these optional fields:
+
+```yaml
+languages:
+  - kotlin
+  - java
+primary_language: kotlin   # must be a member of languages; shown as the default tab
+```
+
+Rules enforced by Zod `superRefine`:
+- `primary_language` requires `languages` to also be present.
+- `primary_language` must be an element of `languages`.
+- Omit both fields for prose-only articles.
+
 ## In V1
 
 Astro site (home / topic landing / article / 404), content collections, client-side filtering by role/experience/difficulty (URL-persisted, shareable), Pagefind static search, derived reading time, related articles, right-hand TOC, MDX callouts, draft-article banners, GitHub Actions sync + deploy.
