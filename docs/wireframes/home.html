@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>OpenSDEPrep — wireframe: Home / Discover</title>
+<style>
+  /* LO-FI WIREFRAME. Greyscale only, no brand colors, no real type scale.
+     Purpose: align on layout & flow, not visual design. */
+  :root { --line:#c9ccd1; --ink:#2b2f36; --muted:#8a9099; --fill:#f3f4f6; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.5 ui-sans-serif,system-ui,Arial; color:var(--ink); background:#fff; }
+  .wrap { max-width:1100px; margin:0 auto; padding:0 20px; }
+  .box { border:1px solid var(--line); border-radius:8px; background:#fff; }
+  .ph  { background:repeating-linear-gradient(135deg,#fafafa,#fafafa 8px,#f1f2f4 8px,#f1f2f4 16px); }
+  .lbl { font-size:11px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+  .muted { color:var(--muted); }
+  .note { font-size:12px; color:var(--muted); font-style:italic; }
+  .row { display:flex; gap:16px; }
+  .grid3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .grid2 { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  h2 { font-size:18px; margin:0 0 4px; }
+  .sec { margin:40px 0; }
+  .pad { padding:16px; }
+  .tag { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:2px 10px; font-size:12px; color:var(--muted); margin-right:6px; }
+  /* annotations */
+  .anno { border-left:3px solid #d0a000; background:#fffdf3; padding:6px 10px; font-size:12px; color:#6b5800; margin-top:8px; border-radius:0 6px 6px 0; }
+  header.nav { border-bottom:1px solid var(--line); position:sticky; top:0; background:#fff; }
+  .nav .wrap { display:flex; align-items:center; gap:16px; height:56px; }
+  .logo { display:flex; align-items:center; gap:8px; font-weight:700; }
+  .logomark { width:26px; height:26px; border:1px solid var(--line); border-radius:6px; display:grid; place-items:center; font-family:ui-monospace,monospace; }
+  .navspacer { flex:1; }
+  .search-trigger { border:1px solid var(--line); border-radius:8px; padding:7px 12px; color:var(--muted); display:flex; gap:10px; align-items:center; min-width:240px; }
+  .kbd { border:1px solid var(--line); border-radius:4px; padding:0 5px; font-size:11px; background:var(--fill); }
+  .hero { padding:48px 0 8px; }
+  .hero h1 { font-size:34px; margin:0 0 8px; }
+  .hero p { font-size:16px; max-width:620px; }
+  footer { border-top:1px solid var(--line); margin-top:64px; padding:24px 0; color:var(--muted); font-size:12px; }
+  .card-h { display:flex; align-items:center; justify-content:space-between; }
+</style>
+</head>
+<body>
+
+<!-- ============ GLOBAL NAV (app shell) ============ -->
+<header class="nav">
+  <div class="wrap">
+    <div class="logo">
+      <span class="logomark">{↑}</span> OpenSDEPrep
+    </div>
+    <nav class="muted" style="display:flex; gap:14px;">
+      <span>Topics</span><span>Roadmaps</span><span>Library</span>
+    </nav>
+    <span class="navspacer"></span>
+    <div class="search-trigger">
+      <span>Search articles…</span><span class="navspacer"></span><span class="kbd">⌘ K</span>
+    </div>
+    <span class="tag">GitHub</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <h1>One upward path through SDE interview prep.</h1>
+    <p class="muted">Curated, structured, open-source reference for DSA, LLD, HLD and more —
+       built for deep reading, not a link dump.</p>
+    <div class="anno">Branding: logomark + wordmark here. Me-first audience → no signup/marketing CTA.</div>
+  </section>
+
+  <!-- ============ RESUME / RECENTLY VIEWED (continuity) ============ -->
+  <section class="sec">
+    <div class="card-h"><h2>Jump back in</h2><span class="lbl">Recently viewed</span></div>
+    <div class="grid3" style="margin-top:12px;">
+      <div class="box pad ph" style="height:84px;"><span class="lbl">Article card</span></div>
+      <div class="box pad ph" style="height:84px;"><span class="lbl">Article card</span></div>
+      <div class="box pad ph" style="height:84px;"><span class="lbl">Article card</span></div>
+    </div>
+    <div class="anno">Personal continuity: localStorage only (no login). Hidden on a fresh visitor's first load.</div>
+  </section>
+
+  <!-- ============ TOPIC GRID (only topics with content) ============ -->
+  <section class="sec">
+    <h2>Topics</h2>
+    <p class="note">Only topics that have content render. Today: LLD live; others appear automatically as they ship.</p>
+    <div class="grid3" style="margin-top:12px;">
+      <div class="box pad">
+        <div class="card-h"><strong>Low-Level Design</strong><span class="muted">28 articles</span></div>
+        <p class="muted" style="margin:8px 0 12px;">OOP, SOLID, GoF patterns, the LLD method, graded case studies.</p>
+        <span class="tag">easy–hard</span><span class="tag">backend</span>
+      </div>
+      <div class="box pad ph" style="display:grid; place-items:center; color:var(--muted);">
+        <span class="lbl">(hidden until it has content)</span>
+      </div>
+      <div class="box pad ph" style="display:grid; place-items:center; color:var(--muted);">
+        <span class="lbl">(hidden until it has content)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ROADMAPS ============ -->
+  <section class="sec">
+    <h2>Recommended paths</h2>
+    <div class="grid2" style="margin-top:12px;">
+      <div class="box pad">
+        <strong>Master LLD — Core</strong>
+        <p class="muted" style="margin:8px 0;">Foundation → Patterns → The LLD Method → graded practice.</p>
+        <span class="lbl">5 phases · 28 articles</span>
+      </div>
+      <div class="box pad ph" style="height:96px;"><span class="lbl">Roadmap card</span></div>
+    </div>
+  </section>
+
+  <!-- ============ RECENTLY UPDATED ============ -->
+  <section class="sec">
+    <h2>Recently updated</h2>
+    <div class="box" style="margin-top:12px;">
+      <div class="pad" style="border-bottom:1px solid var(--line); display:flex; justify-content:space-between;">
+        <span>Article title — subtopic</span><span class="muted">difficulty · ~12 min · date</span></div>
+      <div class="pad" style="border-bottom:1px solid var(--line); display:flex; justify-content:space-between;">
+        <span>Article title — subtopic</span><span class="muted">difficulty · ~8 min · date</span></div>
+      <div class="pad" style="display:flex; justify-content:space-between;">
+        <span>Article title — subtopic</span><span class="muted">difficulty · ~20 min · date</span></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">OpenSDEPrep · open-source · MIT · built with Astro
+    <span class="anno" style="display:inline-block; margin-left:12px;">Me-first: no newsletter/marketing footer yet.</span>
+  </div>
+</footer>
+
+</body>
+</html>
