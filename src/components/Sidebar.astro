@@ -1,6 +1,7 @@
 ---
 import type { ArticleEntry } from '../lib/articles';
 import { readingTimeLabel } from '../lib/reading-time';
+import { href } from '../lib/url';
 
 interface Props {
   entry: ArticleEntry;
@@ -28,7 +29,11 @@ const { data } = entry;
   </div>
   <div class="meta__row">
     <span class="eyebrow">Tags</span>
-    <span class="meta__chips">{data.tags.map((t) => <span class="tag">{t}</span>)}</span>
+    <span class="meta__chips">
+      {data.tags.map((t: string) => (
+        <a class="tag" href={href(`/tags/${encodeURIComponent(t)}`)}>#{t}</a>
+      ))}
+    </span>
   </div>
   <div class="meta__row">
     <span class="eyebrow">Updated</span>

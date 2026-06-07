@@ -15,6 +15,29 @@ export async function getAllArticles(): Promise<ArticleEntry[]> {
   return groups.flat();
 }
 
+/**
+ * All distinct tags across every topic collection, each paired with its
+ * article count. Sorted alphabetically.
+ */
+export async function getAllTags(): Promise<{ tag: string; count: number }[]> {
+  const all = await getAllArticles();
+  const counts = new Map<string, number>();
+  for (const entry of all) {
+    for (const tag of entry.data.tags) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+  return [...counts.entries()]
+    .map(([tag, count]) => ({ tag, count }))
+    .sort((a, b) => a.tag.localeCompare(b.tag));
+}
+
+/** All articles that carry a given tag, sorted (complete before draft, newest first). */
+export async function getArticlesByTag(tag: string): Promise<ArticleEntry[]> {
+  const all = await getAllArticles();
+  return all.filter((e) => e.data.tags.includes(tag));
+}
+
 /** Count of articles per topic, keyed by topic slug. */
 export async function getArticleCounts(): Promise<Record<Topic, number>> {
   const counts = {} as Record<Topic, number>;
@@ -37,7 +60,7 @@ export function relatedArticles(entry: ArticleEntry, pool: ArticleEntry[], limit
     .map((e) => {
       let score = 0;
       if (e.data.subtopic === entry.data.subtopic) score += 2;
-      score += e.data.tags.filter((t) => tags.has(t)).length;
+      score += e.data.tags.filter((t: string) => tags.has(t)).length;
       return { e, score };
     })
     .filter((x) => x.score > 0)

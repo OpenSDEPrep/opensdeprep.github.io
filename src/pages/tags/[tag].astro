@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import ContentList from '../../components/ContentList.astro';
+import { getAllTags, getArticlesByTag } from '../../lib/articles';
+import { href } from '../../lib/url';
+
+export async function getStaticPaths() {
+  const tags = await getAllTags();
+  return tags.map(({ tag }) => ({
+    params: { tag: encodeURIComponent(tag) },
+    props: { tag },
+  }));
+}
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+const entries = await getArticlesByTag(tag);
+---
+<BaseLayout
+  title={`#${tag}`}
+  description={`All articles tagged "${tag}" across OpenSDEPrep topics.`}
+>
+  <div class="container tag-page">
+    <Breadcrumb
+      items={[
+        { label: 'Home', href: href('/') },
+        { label: 'Tags', href: href('/tags') },
+        { label: `#${tag}` },
+      ]}
+    />
+
+    <header class="tag-page__header">
+      <div class="tag-page__eyebrow">
+        <a class="tag-chip" href={href('/tags')}>All tags</a>
+      </div>
+      <h1><span class="tag-page__hash">#</span>{tag}</h1>
+      <p class="tag-page__desc">
+        {entries.length} article{entries.length === 1 ? '' : 's'} tagged with <strong>{tag}</strong>.
+      </p>
+    </header>
+
+    <ContentList entries={entries} />
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-page { padding-block: var(--space-xl); }
+
+  .tag-page__eyebrow { margin-bottom: var(--space-sm); }
+
+  .tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-xs) var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-full);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-muted);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .tag-chip:hover {
+    border-color: var(--color-tertiary);
+    color: var(--color-tertiary);
+    text-decoration: none;
+  }
+
+  .tag-page__hash {
+    color: var(--color-muted);
+  }
+  .tag-page__header { margin-bottom: var(--space-xl); }
+  .tag-page__desc { color: var(--color-secondary); font-size: 18px; max-width: 60ch; margin: var(--space-sm) 0; }
+</style>
