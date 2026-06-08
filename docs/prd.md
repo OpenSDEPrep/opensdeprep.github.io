@@ -105,7 +105,7 @@ Every MD file must include this frontmatter. This is the contract between topic 
 title: "Two Pointer Pattern"
 description: "Using two pointers to solve array/string problems in O(n) time."
 topic: dsa                          # dsa | lld | hld | frontend | devops | lang-runtime
-subtopic: arrays                    # directory name (drives sub-navigation)
+subtopic: arrays                    # must be a valid subtopic for the topic (see table below)
 roles:                              # which roles this is relevant for
   - backend
   - frontend
@@ -121,27 +121,36 @@ tags:                               # free-form, drives search/related content
   - two-pointer
 status: complete                    # draft | complete (draft = visible but flagged)
 last_updated: 2025-06-01
+# Optional — code-bearing articles only:
+languages:                          # languages for which code samples are embedded
+  - python
+  - java
+primary_language: python            # default tab; must be a member of `languages`
 ---
 ```
 
 **Rules:**
 - `topic` must match the repo it lives in. Enforced by a simple lint step.
+- `subtopic` must be one of the validated strings for the article's `topic` (see table below). Unknown subtopics are a build error.
 - `status: draft` files are rendered but visually flagged — lets you push incomplete notes without breaking the site.
 - `experience` and `roles` are arrays — a single article can target multiple.
-- All fields are required. Missing frontmatter = build warning, not failure (graceful degradation).
+- All required fields are required. Missing frontmatter = build warning, not failure (graceful degradation).
 - **Reading time is derived, not authored** — computed from word count at build time, so it is *not* a frontmatter field.
 - **Prerequisites are deferred to post-V1** — when added, they will introduce a `prerequisites` array field here.
+- **`languages` / `primary_language`** are optional. Omit both for prose-only articles. When present, `primary_language` must be an element of `languages`.
 
 ### Subtopic Conventions per Topic
 
-| Topic | Subtopics |
-|-------|-----------|
-| DSA | arrays, strings, linked-lists, trees, graphs, heaps, tries, backtracking, dynamic-programming, greedy, math, bit-manipulation |
-| LLD | oop-principles, design-patterns, solid, class-diagrams, case-studies |
-| HLD | fundamentals, databases, caching, messaging, api-design, distributed-systems, case-studies |
-| Frontend | javascript, typescript, browser-internals, react-internals, css-architecture, web-performance, accessibility |
-| DevOps | containers, kubernetes, ci-cd, cloud-infra, observability, sre, networking |
-| Lang & Runtime | python-internals, jvm, v8, memory-models, concurrency, garbage-collection |
+`subtopic` is validated at build time against the per-topic enum in `src/content.config.ts` (`SUBTOPICS`). Adding a new subtopic requires updating that map.
+
+| Topic | Valid subtopics |
+|-------|-----------------|
+| DSA | `arrays`, `strings`, `linked-lists`, `trees`, `graphs`, `heaps`, `tries`, `backtracking`, `dynamic-programming`, `greedy`, `math`, `bit-manipulation` |
+| LLD | `oop-principles`, `solid`, `design-patterns`, `class-diagrams`, `case-studies` |
+| HLD | `fundamentals`, `databases`, `caching`, `messaging`, `api-design`, `distributed-systems`, `case-studies` |
+| Frontend | `javascript`, `typescript`, `browser-internals`, `react-internals`, `css-architecture`, `web-performance`, `accessibility` |
+| DevOps | `containers`, `kubernetes`, `ci-cd`, `cloud-infra`, `observability`, `sre`, `networking` |
+| Lang & Runtime | `python-internals`, `jvm`, `v8`, `memory-models`, `concurrency`, `garbage-collection` |
 
 ---
 
