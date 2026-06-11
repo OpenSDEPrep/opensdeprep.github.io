@@ -1,17 +1,29 @@
 ---
 import '../styles/global.css';
 import SearchBar from '../components/SearchBar.astro';
+import Logo from '../components/Logo.astro';
 import { TOPIC_META, TOPIC_ORDER } from '../lib/topics';
 import { href } from '../lib/url';
 
 interface Props {
   title: string;
   description?: string;
+  /** Absolute URL to a per-page OG image; falls back to the brand default. */
+  ogImage?: string;
 }
 
-const { title, description = 'Open-source SDE interview prep & engineering learning hub.' } = Astro.props;
+const {
+  title,
+  description = 'Open-source SDE interview prep & engineering learning hub.',
+  ogImage,
+} = Astro.props;
 const siteName = 'OpenSDEPrep';
 const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+
+// Canonical origin — Astro.site is set in astro.config.mjs; fall back gracefully.
+const siteOrigin = Astro.site ? Astro.site.toString().replace(/\/$/, '') : 'https://opensdeprep.github.io';
+const canonicalUrl = new URL(Astro.url.pathname, siteOrigin).toString();
+const resolvedOgImage = ogImage ?? `${siteOrigin}/og-image.svg`;
 ---
 
 <!doctype html>
@@ -19,9 +31,39 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- ── Favicon set ── -->
     <link rel="icon" type="image/svg+xml" href={href('/favicon.svg')} />
+    <!-- PNG fallback (browsers that don't support SVG favicons, e.g. Safari <svg>) -->
+    <link rel="alternate icon" type="image/png" sizes="32x32" href={href('/favicon-32.png')} />
+    <link rel="alternate icon" type="image/png" sizes="16x16" href={href('/favicon-16.png')} />
+    <!-- Apple touch icon -->
+    <link rel="apple-touch-icon" sizes="180x180" href={href('/apple-touch-icon.png')} />
+
+    <!-- ── Primary meta ── -->
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- ── Open Graph / social ── -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={resolvedOgImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={`${siteName} — ${description}`} />
+
+    <!-- ── Twitter / X card ── -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={resolvedOgImage} />
+    <meta name="twitter:image:alt" content={`${siteName} — ${description}`} />
+
+    <!-- ── Fonts ── -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -32,7 +74,9 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
   <body>
     <header class="site-header">
       <div class="container site-header__inner">
-        <a href={href('/')} class="site-header__brand">OpenSDEPrep</a>
+        <a href={href('/')} class="site-header__brand" aria-label="OpenSDEPrep home">
+          <Logo variant="full" />
+        </a>
         <nav class="site-header__nav" aria-label="Topics">
           {TOPIC_ORDER.map((t) => (
             <a href={href(`/${t}`)}>{TOPIC_META[t].label}</a>
@@ -71,11 +115,13 @@ const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
         height: 60px;
       }
       .site-header__brand {
-        font-weight: 700;
-        letter-spacing: -0.02em;
-        color: var(--color-primary);
-        font-size: 18px;
+        display: inline-flex;
+        align-items: center;
+        /* No additional text styling — logo SVG owns its own typography */
+        text-decoration: none;
+        flex-shrink: 0;
       }
+      .site-header__brand:hover { opacity: 0.85; text-decoration: none; }
       .site-header__nav {
         display: flex;
         gap: var(--space-md);

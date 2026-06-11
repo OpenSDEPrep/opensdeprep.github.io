@@ -1,0 +1,77 @@
+---
+/**
+ * Logo — inline SVG mark + optional wordmark.
+ *
+ * Props:
+ *   variant: 'mark'      → icon only (48×48)  — nav collapsed, favicon placeholder
+ *            'full'      → mark + wordmark (200×48)  — default nav use
+ *            'monogram'  → identical to 'mark' but explicit alias
+ *   dark:   boolean      → true on dark backgrounds (flips wordmark colour)
+ *   class:  string       → extra CSS classes forwarded to the <svg> root
+ */
+
+interface Props {
+  variant?: 'mark' | 'monogram' | 'full';
+  dark?: boolean;
+  class?: string;
+}
+
+const {
+  variant = 'full',
+  dark = false,
+  class: className = '',
+} = Astro.props;
+
+const isFull = variant === 'full';
+const wordmarkFill = dark ? '#F9FAFB' : '#111827';
+// viewBox and dimensions differ between variants
+const vb = isFull ? '0 0 200 48' : '0 0 48 48';
+const w = isFull ? 200 : 48;
+const h = 48;
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox={vb}
+  width={w}
+  height={h}
+  role="img"
+  aria-label="OpenSDEPrep"
+  class={className}
+>
+  <defs>
+    <linearGradient id="logo-brand-grad" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+
+  {/* ── Mark tile (always rendered) ── */}
+  <rect width="48" height="48" rx="11" fill={dark ? '#1F2937' : '#111827'}/>
+
+  {/* left curly brace */}
+  <path d="M17 10 C14.5 10 14 10.5 14 12 L14 16 C14 17.5 12.5 18 12 19 C12.5 20 14 20.5 14 22 L14 26 C14 27.5 14.5 28 17 28"
+        stroke="url(#logo-brand-grad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  {/* right curly brace */}
+  <path d="M31 10 C33.5 10 34 10.5 34 12 L34 16 C34 17.5 35.5 18 36 19 C35.5 20 34 20.5 34 22 L34 26 C34 27.5 33.5 28 31 28"
+        stroke="url(#logo-brand-grad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  {/* two paths converging */}
+  <path d="M21 30 L21 26 L24 21 L27 26 L27 30"
+        stroke="url(#logo-brand-grad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  {/* up-arrow tip */}
+  <path d="M22 23 L24 18 L26 23"
+        stroke="url(#logo-brand-grad)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  {/* ── Wordmark (full variant only) ── */}
+  {isFull && (
+    <text x="56" y="31"
+          font-family="Inter, system-ui, sans-serif"
+          font-size="18"
+          font-weight="700"
+          letter-spacing="-0.03em"
+          fill={wordmarkFill}>OpenSDEPrep</text>
+  )}
+</svg>

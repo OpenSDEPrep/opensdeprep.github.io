@@ -1,4 +1,28 @@
+<!--
+  OpenSDEPrep favicon — monogram mark
+  32×32 raster-friendly SVG with crisp pixel grid.
+  Brand concept: curly braces enclosing two converging paths rising to an up-arrow.
+  Palette: indigo→cyan gradient mark on near-black tile.
+-->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="brand-grad-fav" x1="0" y1="1" x2="1" y2="0" gradientUnits="objectBoundingBox">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+  </defs>
+  <!-- tile background -->
   <rect width="32" height="32" rx="7" fill="#111827"/>
-  <path d="M9 11.5 5.5 16 9 20.5M23 11.5 26.5 16 23 20.5M18.5 8l-5 16" stroke="#4F46E5" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- left curly brace strokes -->
+  <path d="M9.5 10.5 C7.5 10.5 7 11 7 12 L7 14 C7 15 6 15.5 5.5 16 C6 16.5 7 17 7 18 L7 20 C7 21 7.5 21.5 9.5 21.5"
+        stroke="url(#brand-grad-fav)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- right curly brace strokes -->
+  <path d="M22.5 10.5 C24.5 10.5 25 11 25 12 L25 14 C25 15 26 15.5 26.5 16 C26 16.5 25 17 25 18 L25 20 C25 21 24.5 21.5 22.5 21.5"
+        stroke="url(#brand-grad-fav)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- two paths converging into an up-arrow (the "merge + rise" concept) -->
+  <path d="M12.5 21 L12.5 18 L16 13.5 L19.5 18 L19.5 21"
+        stroke="url(#brand-grad-fav)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- up-arrow tip -->
+  <path d="M14 15 L16 11.5 L18 15"
+        stroke="url(#brand-grad-fav)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>
